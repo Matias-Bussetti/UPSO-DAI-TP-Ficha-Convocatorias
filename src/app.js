@@ -77,164 +77,231 @@ window.onload = () => {
 xhttp.onreadystatechange = (e) => {
   if (xhttp.readyState == 4 && xhttp.status == 200) {
     var xdoc = xhttp.responseXML;
-    var conv = xdoc.getElementsByTagName("convocatoria")[0];
+
+    var convocatoria = xdoc.getElementsByTagName("convocatoria")[0];
+    var pliego = convocatoria.getElementsByTagName("pliegos")[0].children[0];
+    var condicionesPliego = [...pliego.children[0].children];
+    var articulosLicitados = [
+      ...xdoc.getElementsByTagName("get_items_solicitados")[0].children,
+    ];
+
     //Primera Tabla
 
-    var tablaLicitacion = createElement(
-      "table",
-      { class: "table table-bordered p-0 m-0 position-relative" },
-      createElement(
-        "thead",
-        { class: "sticky-top pb-1 pt-1" },
-        createElement(
-          "tr",
-          { class: "bg-1-2-3" },
-          createElement("th", { innerText: "Área destinada" }),
-          createElement("th", { innerText: "Cantidad" }),
-          createElement("th", { innerText: "Precio Estimado" }),
-          createElement("th", { innerText: "Descripción" })
-        )
-      ),
-      createElement("tbody")
-    );
-    var rowLicitacion = createElement(
-      "tr",
-      null,
-      createElement(
-        "th",
-        { class: "text-center bg-1-2 position-relative" },
-        createElement("span", {
-          class: "sticky-top pb-1 pt-1",
-          innerText: "Licitación: Artículos Solicitados",
-        })
-      ),
-      createElement(
-        "td",
-        { class: "p-0 m-0" },
-        createElement("span", {
-          class: "sticky-top pb-1 pt-1",
-          innerText: "Licitación: Artículos Solicitados",
-        })
-      )
-    );
-
-    tableDatosConvocatoria.append(tablaLicitacion);
-    var tableDatosConvocatoria = createElement(
-      "table",
-      { class: "table table-bordered mx-auto w-75" },
-      createElement(
-        "thead",
-        null,
-        createElement(
-          "tr",
-          null,
-          createElement("th", {
-            class: "bg-1",
-            colspan: 3,
-            innerText: "Datos de la Convocatoria",
-          })
-        )
-      ),
-      createElement(
-        "tbody",
-        null,
-        createElement(
-          "tr",
-          null,
-          createElement("th", {
-            class: "bg-1-2-3-4",
+    //Datos de la Convocatoria
+    var expedienteTipoDocumentacion = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
             innerText: "Tipo",
-          }),
-          createElement("td", {
-            innerText: conv.getAttribute("expediente_tipo_documentacion"),
-          })
-        ),
-        createElement(
-          "tr",
-          null,
-          createElement("th", {
-            class: "bg-1-2-3-4",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: convocatoria.getAttribute(
+              "expediente_tipo_documentacion"
+            ),
+          },
+        },
+      ],
+    };
+    var expedienteNumeroExpedienteEjercicio = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
             innerText: "Número/Año",
-          }),
-          createElement("td", {
+          },
+        },
+        {
+          tagName: "td",
+          options: {
             innerText:
-              conv.getAttribute("expediente_numero") +
+              convocatoria.getAttribute("expediente_numero") +
               "/" +
-              conv.getAttribute("expediente_ejercicio"),
-          })
-        ),
-        createElement(
-          "tr",
-          null,
-          createElement("th", {
-            class: "bg-1-2-3-4",
+              convocatoria.getAttribute("expediente_ejercicio"),
+          },
+        },
+      ],
+    };
+    var asuntoConvocatoria = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
             innerText: "Asunto",
-          }),
-          createElement("td", {
-            innerText: conv.getAttribute("asunto_convocatoria"),
-          })
-        )
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: convocatoria.getAttribute("asunto_convocatoria"),
+          },
+        },
+      ],
+    };
+
+    //Datos del Pliego
+    var retiroPliegoDireccion = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
+            innerText: "Dirección",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: pliego.getAttribute("retiro_pliego_direccion"),
+          },
+        },
+      ],
+    };
+    var retiroPliegoPlazoHorario = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
+            innerText: "Plazo Horario",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: pliego.getAttribute("retiro_pliego_plazo_horario"),
+          },
+        },
+      ],
+    };
+    var actoAperturaDireccion = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
+            innerText: "Dirección Acto Apertura",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: pliego.getAttribute("acto_apertura_direccion"),
+          },
+        },
+      ],
+    };
+    var actoAperturaFechaInicio = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
+            innerText: "Fecha Apertura",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: pliego.getAttribute("acto_apertura_fecha_inicio"),
+          },
+        },
+      ],
+    };
+    var actoAperturaHorarioInicio = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "bg-1-2-3-4 align-middle text-center",
+            innerText: "Horario Inicio",
+          },
+        },
+        {
+          tagName: "td",
+          options: {
+            innerText: pliego.getAttribute("acto_apertura_horario_inicio"),
+          },
+        },
+      ],
+    };
+
+    //Condiciones Del Pliego
+
+    condicionesPliego = condicionesPliego
+      .sort(
+        (primerItem, segundoItem) =>
+          +(
+            primerItem.getAttribute("numero") -
+            +segundoItem.getAttribute("numero")
+          )
       )
-    );
+      .map((condicion) => {
+        return {
+          tagName: "tr",
+          children: [
+            {
+              tagName: "th",
+              options: {
+                class: "text-center bg-1-2-3-4 position-relative",
+              },
+              children: [
+                {
+                  tagName: "span",
+                  options: {
+                    class: "sticky-top pb-1 pt-1",
+                    innerText:
+                      condicion.getAttribute("numero") +
+                      " - " +
+                      condicion.getAttribute("titulo"),
+                  },
+                },
+              ],
+            },
+            {
+              tagName: "td",
+              options: {
+                innerHTML: condicion.getAttribute("descripcion"),
+              },
+            },
+          ],
+        };
+      });
+
     /*
-    createElement(
-      "tr",
-      null,
-      
-      
-      
-    )
-    .querySelector("tbody")
-    .append(createElement("p", { innerText: "no" }));
-    */
-    document.body.prepend(tableDatosConvocatoria);
+    Datos de la Convocatoria
+    convocatoria.getAttribute("expediente_tipo_documentacion")
+    convocatoria.getAttribute("expediente_numero")
+    convocatoria.getAttribute("expediente_ejercicio")
+    convocatoria.getAttribute("asunto_convocatoria")
+    
+    /-0-/
 
-    console.log("%cDatos de la Convocatoria", "color:red;font-size:20px");
+    Datos del Pliego
 
-    console.log(
-      "%c" + conv.getAttribute("expediente_tipo_documentacion"),
-      "color:green;"
-    );
-    console.log("%c" + conv.getAttribute("expediente_numero"), "color:green;");
-    console.log(
-      "%c" + conv.getAttribute("expediente_ejercicio"),
-      "color:green;"
-    );
-    console.log(
-      "%c" + conv.getAttribute("asunto_convocatoria"),
-      "color:green;"
-    );
+    pliego.getAttribute("retiro_pliego_direccion")
+    pliego.getAttribute("retiro_pliego_plazo_horario")
+    pliego.getAttribute("acto_apertura_direccion")
+    pliego.getAttribute("acto_apertura_fecha_inicio")
+    pliego.getAttribute("acto_apertura_horario_inicio")
 
-    console.log("%cDatos del Pliego", "color:purple;font-size:20px");
-
-    var pliego = conv.getElementsByTagName("pliegos")[0].children[0];
-
-    console.log(
-      "%c" + pliego.getAttribute("retiro_pliego_direccion"),
-      "color: pink;"
-    );
-    console.log(
-      "%c" + pliego.getAttribute("retiro_pliego_plazo_horario"),
-      "color: pink;"
-    );
-    console.log(
-      "%c" + pliego.getAttribute("acto_apertura_direccion"),
-      "color: pink;"
-    );
-    console.log(
-      "%c" + pliego.getAttribute("acto_apertura_fecha_inicio"),
-      "color: pink;"
-    );
-    console.log(
-      "%c" + pliego.getAttribute("acto_apertura_horario_inicio"),
-      "color: pink;"
-    );
-
-    console.log("%cCondiciones del pliego", "color:orange;font-size:20px");
-
-    var registrosPliegos = [...pliego.children[0].children];
-
-    registrosPliegos
+    Condiciones del pliego
+    
+    condicionesPliego
       .sort(
         (primerItem, segundoItem) =>
           +(
@@ -243,45 +310,223 @@ xhttp.onreadystatechange = (e) => {
           )
       )
       .forEach((registro) => {
-        console.log("%c" + registro.getAttribute("numero"), "color: #e67d63;");
-        console.log("%c" + registro.getAttribute("titulo"), "color: #e67d63;");
-        console.log(
-          "%c" + registro.getAttribute("descripcion"),
-          "color: #e67d63;"
-        );
+        registro.getAttribute("numero")
+        registro.getAttribute("titulo")
+        registro.getAttribute("descripcion")
       });
-    console.log("%c get_items_solicitados", "color:#00ffff;font-size:20px");
-    [...xdoc.getElementsByTagName("get_items_solicitados")[0].children].forEach(
+
+    get_items_solicitados
+
+     articulosLicitados.forEach(
       (item) => {
-        console.log(item.getAttribute("area_destinataria"));
-        console.log(item.getAttribute("cantidad"));
-        console.log(item.getAttribute("precio_estimado"));
-        console.log(item.getAttribute("descripcion"));
+        item.getAttribute("area_destinataria")
+        item.getAttribute("cantidad")
+        item.getAttribute("precio_estimado")
+        item.getAttribute("descripcion")
       }
     );
-
-    /*
-    [...xdoc.getElementsByTagName("pliegos")].forEach((conv) => {
-      console.log(
-        "%c" + conv.getAttribute("expediente_tipo_documentacion"),
-        "color:green;"
-      );
-      console.log(
-        "%c" + conv.getAttribute("expediente_numero"),
-        "color:green;"
-      );
-      console.log(
-        "%c" + conv.getAttribute("expediente_ejercicio"),
-        "color:green;"
-      );
-      console.log(
-        "%c" + conv.getAttribute("asunto_convocatoria"),
-        "color:green;"
-      );
-    });
+    
     */
+    var rowTableCondicionesPliego = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "text-center bg-1-2-3 position-relative",
+          },
+          children: [
+            {
+              tagName: "span",
+              options: {
+                class: "sticky-top pb-1 pt-1",
+                innerText: "Condiciones del Pliego",
+              },
+            },
+          ],
+        },
+        {
+          tagName: "td",
+          options: { class: "p-0 m-0" },
+          children: [
+            {
+              tagName: "table",
+              options: {
+                class: "table table-bordered p-0 m-0",
+              },
+              children: [
+                {
+                  tagName: "tbody",
+                  children: condicionesPliego,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    var rowTableDataPliego = {
+      tagName: "tr",
+      children: [
+        {
+          tagName: "th",
+          options: {
+            class: "text-center bg-1-2 position-relative",
+          },
+          children: [
+            {
+              tagName: "span",
+              options: {
+                class: "sticky-top pb-1 pt-1",
+                innerText: "Datos del Pliego",
+              },
+            },
+          ],
+        },
+        {
+          tagName: "td",
+          options: { class: "p-0 m-0" },
+          children: [
+            {
+              tagName: "table",
+              options: {
+                class: "table table-bordered p-0 m-0",
+              },
+              children: [
+                {
+                  tagName: "tbody",
+                  children: [
+                    retiroPliegoDireccion,
+                    retiroPliegoPlazoHorario,
+                    actoAperturaDireccion,
+                    actoAperturaFechaInicio,
+                    actoAperturaHorarioInicio,
+                    rowTableCondicionesPliego,
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    var table = {
+      tagName: "table",
+      options: {
+        class: "table table-bordered mx-auto w-75",
+      },
+      children: [
+        {
+          tagName: "thead",
+          children: [
+            {
+              tagName: "tr",
+              children: [
+                {
+                  tagName: "th",
+                  options: {
+                    class: "bg-1",
+                    colspan: "3",
+                    innerText: "Datos de la Convocatoria",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          tagName: "tbody",
+          children: [
+            expedienteTipoDocumentacion,
+            expedienteNumeroExpedienteEjercicio,
+            asuntoConvocatoria,
+            rowTableDataPliego,
+          ],
+        },
+      ],
+    };
+
+    document.body.prepend(createElementRecusive(table));
   }
-  //console.log("xhttp.onreadystatechange", e);
 };
 
 // + TABLE CREEATE ELEMENT
+/*
+{
+  tagName: "th",
+  children: [],
+},
+{
+  tagName: "th",
+  children: [],
+},
+
+{
+  tagName: "tr",
+  children: [],
+},
+{
+  tagName: "thead",
+  children: [],
+},
+{
+  tagName: "tbody",
+  children: [],
+},
+{
+  tagName: "",
+  options: {
+    class: "",
+    colspan: "",
+    innerHTML: "",
+    innerText: "",
+  },
+  children: [],
+},
+
+
+/tr for table
+*/
+/*
+a = {
+  tagName: "tr",
+  children: [
+    {
+      tagName: "th",
+      options: {
+        class: "text-center bg-1-2 position-relative",
+      },
+      children: [
+        {
+          tagName: "span",
+          options: {
+            class: "sticky-top pb-1 pt-1",
+            innerText: "Datos del Pliego",
+          },
+        },
+      ],
+    },
+    {
+      tagName: "td",
+      options: { class: "p-0 m-0" },
+      children: [
+        {
+          tagName: "td",
+          options: { class: "p-0 m-0" },
+          children: [
+            {
+              tagName: "table",
+              options: {
+                class: "table table-bordered p-0 m-0",
+              },
+              children: [],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+*/
