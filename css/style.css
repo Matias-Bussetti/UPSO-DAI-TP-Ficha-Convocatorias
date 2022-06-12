@@ -17,16 +17,16 @@
   background-color: #3b7d8f !important;
 }
 
-.zoomout {
-  zoom: 1;
-  -moz-transform: scale(1);
-  -moz-transform-origin: 0 0;
+#scroll {
+  overflow-x: inherit;
+}
+
+.offcanvas {
+  --bs-offcanvas-height: 200px !important;
 }
 
 @media (max-width: 600px) {
-  .zoomout {
-    zoom: 0.5;
-    -moz-transform: scale(0.5);
-    -moz-transform-origin: 0 0;
+  #scroll {
+    overflow-x: scroll;
   }
 }
