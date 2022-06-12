@@ -1,82 +1,62 @@
 window.onload = () => {
+  const BUTTON_REQUEST_ID = "request";
+  const BUTTON_ABORT_ID = "abort";
+
+  const LOADING_ICON_ID = "loading-button-icon";
+
   const CONTAINER_TABLE_QUERY = "main";
-  const PROGRESS_BAR = "progress";
+
+  const PROGRESS_BAR_ID = "progress";
   const PROGRESS_BAR_CLEAN_CLASSLIST =
     "progress-bar progress-bar-striped progress-bar-animated";
-
-  const BUTTON_REQUEST_QUERY = "request";
-  const BUTTON_ABORT_QUERY = "abort";
 
   var xhttp = new XMLHttpRequest();
   var offCanvas = new bootstrap.Offcanvas(document.querySelector(".offcanvas"));
 
-  //Load
-  xhttp.onloadstart = (e) => {
-    document.querySelector(CONTAINER_TABLE_QUERY).innerHTML = "";
+  var buttonRequest = document.getElementById(BUTTON_REQUEST_ID);
+  var buttonAbort = document.getElementById(BUTTON_ABORT_ID);
+  var loadingIconElement = document.getElementById(LOADING_ICON_ID);
+  var progressBarElement = document.getElementById(PROGRESS_BAR_ID);
 
-    showOrHideLoadingIcon(true);
-    buttonDisableAttributeValue("send", true);
-    buttonDisableAttributeValue("abort", false);
-    cleanProgressBar(PROGRESS_BAR, PROGRESS_BAR_CLEAN_CLASSLIST);
-  };
-
-  xhttp.onprogress = (e) => {
-    var percentageLoad = Math.round((100 * e.loaded) / e.total);
-    progressBarValues(PROGRESS_BAR, percentageLoad, percentageLoad + "%");
-  };
-
-  xhttp.onloadend = (e) => {
-    showOrHideLoadingIcon(false);
-  };
-
-  xhttp.onabort = () => {
-    progressBarValues(
-      PROGRESS_BAR,
-      100,
-      "Descarga Cancelada",
-      "bg-warning",
-      "text-dark"
-    );
-    hideOffsetTimeOut();
-  };
-
-  //WINDOW ON LOAD
-  document.getElementById("send").addEventListener("click", () => {
+  buttonRequest.addEventListener("click", () => {
     offCanvas.show();
     xhttp.open("GET", "./ficha_convocatorias.xml");
     xhttp.send();
   });
 
-  document.getElementById("abort").addEventListener("click", () => {
+  buttonAbort.addEventListener("click", () => {
     xhttp.abort();
   });
+
+  function hideOffsetTimeOut() {
+    setTimeout(() => {
+      offCanvas.hide();
+      elementDisableAttributeValue(buttonRequest, false);
+    }, 2000);
+  }
 
   xhttp.onreadystatechange = (e) => {
     if (xhttp.readyState == 4) {
       switch (xhttp.status) {
         case 200:
           progressBarValues(
-            PROGRESS_BAR,
+            progressBarElement,
             100,
             "Descarga Completa",
             "bg-success"
           );
 
-          buttonDisableAttributeValue("abort", true);
+          elementDisableAttributeValue(buttonAbort, true);
 
-          setTimeout(() => {
-            offCanvas.hide();
-            buttonDisableAttributeValue("send", false);
-            document
-              .querySelector(CONTAINER_TABLE_QUERY)
-              .append(tableFromXML(xhttp));
-          }, 1000);
-
+          document
+            .querySelector(CONTAINER_TABLE_QUERY)
+            .append(tableFromXML(xhttp));
+          hideOffsetTimeOut();
           break;
 
         case 404:
           progressBarValues(
-            PROGRESS_BAR,
+            progressBarElement,
             100,
             "No se encuentra el recurso (404)",
             "bg-danger"
@@ -86,7 +66,7 @@ window.onload = () => {
 
         case 500:
           progressBarValues(
-            PROGRESS_BAR,
+            progressBarElement,
             100,
             "Error en el Servidor (500)",
             "bg-danger"
@@ -98,6 +78,55 @@ window.onload = () => {
           break;
       }
     }
+  };
+
+  //Load
+  xhttp.onloadstart = (e) => {
+    document.querySelector(CONTAINER_TABLE_QUERY).innerHTML = "";
+    showElement(loadingIconElement, true);
+    elementDisableAttributeValue(buttonRequest, true);
+    elementDisableAttributeValue(buttonAbort, false);
+    cleanProgressBar(progressBarElement, PROGRESS_BAR_CLEAN_CLASSLIST);
+  };
+
+  xhttp.onprogress = (e) => {
+    var percentageLoad = Math.round((100 * e.loaded) / e.total);
+    progressBarValues(progressBarElement, percentageLoad, percentageLoad + "%");
+  };
+
+  xhttp.onloadend = (e) => {
+    showElement(loadingIconElement, false);
+  };
+
+  xhttp.onabort = () => {
+    progressBarValues(
+      progressBarElement,
+      100,
+      "Descarga Cancelada",
+      "bg-warning",
+      "text-dark"
+    );
+    hideOffsetTimeOut();
+  };
+
+  xhttp.onerror = () => {
+    elementDisableAttributeValue(buttonAbort, true);
+    if (!window.navigator.onLine) {
+      progressBarValues(
+        progressBarElement,
+        100,
+        "Se perdio la Conexión",
+        "bg-danger"
+      );
+    } else {
+      progressBarValues(
+        progressBarElement,
+        100,
+        "Ocurrio un Error...",
+        "bg-danger"
+      );
+    }
+    hideOffsetTimeOut();
   };
 
   function tableFromXML(xhttp) {
@@ -112,185 +141,69 @@ window.onload = () => {
 
     //Primera Tabla
 
+    function tdAttributeRow(attributeHeader, attributeValue) {
+      return {
+        tagName: "tr",
+        options: {
+          class: "align-middle",
+        },
+        children: [
+          {
+            tagName: "th",
+            options: {
+              class: "bg-1-2-3-4 text-center",
+              innerText: attributeHeader,
+            },
+          },
+          {
+            tagName: "td",
+            options: {
+              innerText: attributeValue,
+            },
+          },
+        ],
+      };
+    }
+
     //Datos de la Convocatoria
-    var expedienteTipoDocumentacion = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Tipo",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: convocatoria.getAttribute(
-              "expediente_tipo_documentacion"
-            ),
-          },
-        },
-      ],
-    };
-    var expedienteNumeroExpedienteEjercicio = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Número/Año",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText:
-              convocatoria.getAttribute("expediente_numero") +
-              "/" +
-              convocatoria.getAttribute("expediente_ejercicio"),
-          },
-        },
-      ],
-    };
-    var asuntoConvocatoria = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Asunto",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: convocatoria.getAttribute("asunto_convocatoria"),
-          },
-        },
-      ],
-    };
+    var expedienteTipoDocumentacion = tdAttributeRow(
+      "Tipo",
+      convocatoria.getAttribute("expediente_tipo_documentacion")
+    );
+    var expedienteNumeroExpedienteEjercicio = tdAttributeRow(
+      "Número/Año",
+      convocatoria.getAttribute("expediente_numero") +
+        "/" +
+        convocatoria.getAttribute("expediente_ejercicio")
+    );
+    var asuntoConvocatoria = tdAttributeRow(
+      "Asunto",
+      convocatoria.getAttribute("asunto_convocatoria")
+    );
 
     //Datos del Pliego
-    var retiroPliegoDireccion = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Dirección",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: pliego.getAttribute("retiro_pliego_direccion"),
-          },
-        },
-      ],
-    };
-    var retiroPliegoPlazoHorario = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Plazo Horario",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: pliego.getAttribute("retiro_pliego_plazo_horario"),
-          },
-        },
-      ],
-    };
-    var actoAperturaDireccion = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Dirección Acto Apertura",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: pliego.getAttribute("acto_apertura_direccion"),
-          },
-        },
-      ],
-    };
-    var actoAperturaFechaInicio = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Fecha Apertura",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: pliego.getAttribute("acto_apertura_fecha_inicio"),
-          },
-        },
-      ],
-    };
-    var actoAperturaHorarioInicio = {
-      tagName: "tr",
-      options: {
-        class: "align-middle",
-      },
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "bg-1-2-3-4 text-center",
-            innerText: "Horario Inicio",
-          },
-        },
-        {
-          tagName: "td",
-          options: {
-            innerText: pliego.getAttribute("acto_apertura_horario_inicio"),
-          },
-        },
-      ],
-    };
+    var retiroPliegoDireccion = tdAttributeRow(
+      "Dirección",
+      pliego.getAttribute("retiro_pliego_direccion")
+    );
+    var retiroPliegoPlazoHorario = tdAttributeRow(
+      "Plazo Horario",
+      pliego.getAttribute("retiro_pliego_plazo_horario")
+    );
+    var actoAperturaDireccion = tdAttributeRow(
+      "Dirección Acto Apertura",
+      pliego.getAttribute("acto_apertura_direccion")
+    );
+    var actoAperturaFechaInicio = tdAttributeRow(
+      "Fecha Apertura",
+      pliego.getAttribute("acto_apertura_fecha_inicio")
+    );
+    var actoAperturaHorarioInicio = tdAttributeRow(
+      "Horario Inicio",
+      pliego.getAttribute("acto_apertura_horario_inicio")
+    );
 
     //Condiciones Del Pliego
-
     condicionesPliego = condicionesPliego
       .sort(
         (primerItem, segundoItem) =>
@@ -331,6 +244,7 @@ window.onload = () => {
         };
       });
 
+    //Acticulos Solicitados
     articulosLicitados = articulosLicitados.map((articulos) => {
       return {
         tagName: "tr",

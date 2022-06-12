@@ -1,40 +1,49 @@
-function cleanProgressBar(progressBarQuery, classListString) {
-  var progressBar = document.getElementById(progressBarQuery);
+function cleanProgressBar(progressBar, classListString) {
   progressBar.style.width = "0%";
   progressBar.innerText = "";
   progressBar.classList = classListString;
 }
 
-function progressBarValues(progressBarQuery, width, text, ...classLists) {
-  var progressBar = document.getElementById(progressBarQuery);
+function progressBarValues(progressBar, width, text, ...classLists) {
   progressBar.style.width = width + "%";
   progressBar.innerText = text;
 
   classLists.forEach((cssClass) => progressBar.classList.toggle(cssClass));
 }
 
-function showElement(element,display) {
-  if (display) {
-    element.styles.display = display ? "initial" :  
+function showElement(element, displayValue) {
+  element.style.display = displayValue ? "inline-block" : "none";
+}
+
+function elementDisableAttributeValue(element, value) {
+  if (value) {
+    element.setAttribute("disabled", "");
   } else {
-    document
-      .getElementById("loading-button-icon")
-      .classList.remove("d-inline-block");
-    document.getElementById("loading-button-icon").classList.add("d-none");
+    element.removeAttribute("disabled", "");
   }
 }
 
-function buttonDisableAttributeValue(buttonElement, disable) {
-  if (disable) {
-    buttonElement.setAttribute("disabled", "");
-  } else {
-    buttonElement.removeAttribute("disabled", "");
+function jsonToElement({ tagName, options, children }) {
+  var element = document.createElement(tagName);
+  if (options) {
+    Object.entries(options).forEach((option) => {
+      switch (option[0]) {
+        case "innerText":
+          element.innerText = option[1];
+          break;
+        case "innerHTML":
+          element.innerHTML = option[1];
+          break;
+        default:
+          element.setAttribute(option[0], option[1]);
+          break;
+      }
+    });
   }
-}
-
-function hideOffsetTimeOut() {
-  setTimeout(() => {
-    offCanvas.hide();
-    buttonDisableAttributeValue("send", false);
-  }, 2000);
+  if (children) {
+    children.forEach((child) => {
+      element.append(jsonToElement(child));
+    });
+  }
+  return element;
 }

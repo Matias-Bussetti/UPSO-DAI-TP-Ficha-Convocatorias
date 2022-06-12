@@ -21,6 +21,10 @@
   overflow-x: inherit;
 }
 
+#loading-button-icon {
+  display: none;
+}
+
 .offcanvas {
   --bs-offcanvas-height: 200px !important;
 }
