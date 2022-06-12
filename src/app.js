@@ -430,7 +430,7 @@ window.onload = () => {
       ],
     };
 
-    return jsonToElement({
+    return objectToElement({
       tagName: "table",
       options: {
         class: "table table-bordered",
