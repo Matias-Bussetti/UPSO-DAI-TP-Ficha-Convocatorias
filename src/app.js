@@ -10,6 +10,15 @@ window.onload = () => {
   const PROGRESS_BAR_CLEAN_CLASSLIST =
     "progress-bar progress-bar-striped progress-bar-animated";
 
+  //Datos de la Convocatoria tbody
+  const CONTAINER_DATA_CONVOCATORIA = "datos-convocatoria";
+  //Datos del Pliego tbody
+  const CONTAINER_DATA_PLIEGO = "datos-pliego";
+  //Condiciones del Pliego tbody
+  const CONTAINER_DATA_CONDICIONES_PLIEGO = "datos-condiciones";
+  //Articulos Solicitados tbody
+  const CONTAINER_DATA_ARTICULOS_SOLICITADOS = "articulos-solicitados";
+
   var xhttp = new XMLHttpRequest();
   var offCanvas = new bootstrap.Offcanvas(document.querySelector(".offcanvas"));
 
@@ -17,6 +26,17 @@ window.onload = () => {
   var buttonAbort = document.getElementById(BUTTON_ABORT_ID);
   var loadingIconElement = document.getElementById(LOADING_ICON_ID);
   var progressBarElement = document.getElementById(PROGRESS_BAR_ID);
+
+  var containerDataConvocatoria = document.getElementById(
+    CONTAINER_DATA_CONVOCATORIA
+  );
+  var containerDataPliego = document.getElementById(CONTAINER_DATA_PLIEGO);
+  var containerDataCondicionesPliego = document.getElementById(
+    CONTAINER_DATA_CONDICIONES_PLIEGO
+  );
+  var containerDataArticulosSolicitados = document.getElementById(
+    CONTAINER_DATA_ARTICULOS_SOLICITADOS
+  );
 
   buttonRequest.addEventListener("click", () => {
     offCanvas.show();
@@ -82,7 +102,7 @@ window.onload = () => {
 
   //Load
   xhttp.onloadstart = (e) => {
-    document.querySelector(CONTAINER_TABLE_QUERY).innerHTML = "";
+    //document.querySelector(CONTAINER_TABLE_QUERY).innerHTML = "";
     showElement(loadingIconElement, true);
     elementDisableAttributeValue(buttonRequest, true);
     elementDisableAttributeValue(buttonAbort, false);
@@ -131,6 +151,7 @@ window.onload = () => {
 
   function tableFromXML(xhttp) {
     var xdoc = xhttp.responseXML;
+    console.log(xdoc);
 
     var convocatoria = xdoc.getElementsByTagName("convocatoria")[0];
     var pliego = convocatoria.getElementsByTagName("pliegos")[0].children[0];
@@ -139,332 +160,101 @@ window.onload = () => {
       ...xdoc.getElementsByTagName("get_items_solicitados")[0].children,
     ];
 
-    //Primera Tabla
+    //Ordenamos las Condiciones del Pliego
+    condicionesPliego = condicionesPliego.sort(
+      (primerItem, segundoItem) =>
+        +(
+          primerItem.getAttribute("numero") -
+          +segundoItem.getAttribute("numero")
+        )
+    );
 
-    function tdAttributeRow(attributeHeader, attributeValue) {
-      return {
-        tagName: "tr",
-        options: {
-          class: "align-middle",
-        },
-        children: [
-          {
-            tagName: "th",
-            options: {
-              class: "bg-1-2-3-4 text-center",
-              innerText: attributeHeader,
-            },
-          },
-          {
+    function dataToTrObject(isText, ...tableData) {
+      var tdObjectChildrens = tableData.map((data) => {
+        let tdObject;
+        if (isText) {
+          tdObject = {
             tagName: "td",
             options: {
-              innerText: attributeValue,
+              innerText: data,
             },
-          },
-        ],
+          };
+        } else {
+          tdObject = {
+            tagName: "td",
+            options: {
+              innerHTML: data,
+            },
+          };
+        }
+        return tdObject;
+      });
+      return {
+        tagName: "tr",
+        children: tdObjectChildrens,
       };
     }
-
-    //Datos de la Convocatoria
-    var expedienteTipoDocumentacion = tdAttributeRow(
-      "Tipo",
-      convocatoria.getAttribute("expediente_tipo_documentacion")
-    );
-    var expedienteNumeroExpedienteEjercicio = tdAttributeRow(
-      "Número/Año",
+    console.log(
+      convocatoria.getAttribute("expediente_tipo_documentacion"),
       convocatoria.getAttribute("expediente_numero") +
         "/" +
-        convocatoria.getAttribute("expediente_ejercicio")
-    );
-    var asuntoConvocatoria = tdAttributeRow(
-      "Asunto",
+        convocatoria.getAttribute("expediente_ejercicio"),
       convocatoria.getAttribute("asunto_convocatoria")
     );
 
-    //Datos del Pliego
-    var retiroPliegoDireccion = tdAttributeRow(
-      "Dirección",
-      pliego.getAttribute("retiro_pliego_direccion")
-    );
-    var retiroPliegoPlazoHorario = tdAttributeRow(
-      "Plazo Horario",
-      pliego.getAttribute("retiro_pliego_plazo_horario")
-    );
-    var actoAperturaDireccion = tdAttributeRow(
-      "Dirección Acto Apertura",
-      pliego.getAttribute("acto_apertura_direccion")
-    );
-    var actoAperturaFechaInicio = tdAttributeRow(
-      "Fecha Apertura",
-      pliego.getAttribute("acto_apertura_fecha_inicio")
-    );
-    var actoAperturaHorarioInicio = tdAttributeRow(
-      "Horario Inicio",
-      pliego.getAttribute("acto_apertura_horario_inicio")
-    );
-
-    //Condiciones Del Pliego
-    condicionesPliego = condicionesPliego
-      .sort(
-        (primerItem, segundoItem) =>
-          +(
-            primerItem.getAttribute("numero") -
-            +segundoItem.getAttribute("numero")
-          )
+    containerDataConvocatoria.append(
+      objectToElement(
+        dataToTrObject(
+          true,
+          convocatoria.getAttribute("expediente_tipo_documentacion"),
+          convocatoria.getAttribute("expediente_numero") +
+            "/" +
+            convocatoria.getAttribute("expediente_ejercicio"),
+          convocatoria.getAttribute("asunto_convocatoria")
+        )
       )
-      .map((condicion) => {
-        return {
-          tagName: "tr",
-          children: [
-            {
-              tagName: "th",
-              options: {
-                class: "text-center bg-1-2-3-4 position-relative",
-              },
-              children: [
-                {
-                  tagName: "span",
-                  options: {
-                    class: "sticky-top pb-4 pt-4",
-                    innerText:
-                      condicion.getAttribute("numero") +
-                      " - " +
-                      condicion.getAttribute("titulo"),
-                  },
-                },
-              ],
-            },
-            {
-              tagName: "td",
-              options: {
-                innerHTML: condicion.getAttribute("descripcion"),
-              },
-            },
-          ],
-        };
-      });
+    );
 
-    //Acticulos Solicitados
-    articulosLicitados = articulosLicitados.map((articulos) => {
-      return {
-        tagName: "tr",
-        children: [
-          {
-            tagName: "td",
-            options: {
-              innerHTML: articulos.getAttribute("area_destinataria"),
-            },
-          },
-          {
-            tagName: "td",
-            options: {
-              innerHTML: articulos.getAttribute("cantidad"),
-            },
-          },
-          {
-            tagName: "td",
-            options: {
-              innerHTML: articulos.getAttribute("precio_estimado"),
-            },
-          },
-          {
-            tagName: "td",
-            options: {
-              innerHTML: articulos.getAttribute("descripcion"),
-            },
-          },
-        ],
-      };
+    containerDataPliego.append(
+      objectToElement(
+        dataToTrObject(
+          true,
+          pliego.getAttribute("retiro_pliego_direccion"),
+          pliego.getAttribute("retiro_pliego_plazo_horario"),
+          pliego.getAttribute("acto_apertura_direccion"),
+          pliego.getAttribute("acto_apertura_fecha_inicio"),
+          pliego.getAttribute("acto_apertura_horario_inicio")
+        )
+      )
+    );
+
+    condicionesPliego.forEach((condicion) => {
+      containerDataCondicionesPliego.append(
+        objectToElement(
+          dataToTrObject(
+            false,
+            condicion.getAttribute("numero"),
+            condicion.getAttribute("titulo"),
+            condicion.getAttribute("descripcion")
+          )
+        )
+      );
     });
 
-    var rowTableCondicionesPliego = {
-      tagName: "tr",
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "text-center bg-1-2-3 position-relative",
-          },
-          children: [
-            {
-              tagName: "span",
-              options: {
-                class: "sticky-top pb-4 pt-4",
-                innerText: "Condiciones del Pliego",
-              },
-            },
-          ],
-        },
-        {
-          tagName: "td",
-          options: { class: "p-0 m-0" },
-          children: [
-            {
-              tagName: "table",
-              options: {
-                class: "table table-bordered p-0 m-0",
-              },
-              children: [
-                {
-                  tagName: "tbody",
-                  children: condicionesPliego,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    var rowTableDataPliego = {
-      tagName: "tr",
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "text-center bg-1-2 position-relative",
-          },
-          children: [
-            {
-              tagName: "span",
-              options: {
-                class: "sticky-top pb-4 pt-4",
-                innerText: "Datos del Pliego",
-              },
-            },
-          ],
-        },
-        {
-          tagName: "td",
-          options: { class: "p-0 m-0" },
-          children: [
-            {
-              tagName: "table",
-              options: {
-                class: "table table-bordered p-0 m-0",
-              },
-              children: [
-                {
-                  tagName: "tbody",
-                  children: [
-                    retiroPliegoDireccion,
-                    retiroPliegoPlazoHorario,
-                    actoAperturaDireccion,
-                    actoAperturaFechaInicio,
-                    actoAperturaHorarioInicio,
-                    rowTableCondicionesPliego,
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    var rowTableArticulosListados = {
-      tagName: "tr",
-      children: [
-        {
-          tagName: "th",
-          options: {
-            class: "text-center bg-1-2 position-relative",
-          },
-          children: [
-            {
-              tagName: "span",
-              options: {
-                class: "sticky-top pb-4 pt-4",
-                innerText: "Artículos Solicitados",
-              },
-            },
-          ],
-        },
-        {
-          tagName: "td",
-          options: { class: "p-0 m-0" },
-          children: [
-            {
-              tagName: "table",
-              options: {
-                class: "table table-bordered p-0 m-0 position-relative",
-              },
-              children: [
-                {
-                  tagName: "thead",
-                  options: {
-                    class: "sticky-top pb-4 pt-4",
-                  },
-                  children: [
-                    {
-                      tagName: "tr",
-                      options: {
-                        class: "bg-1-2-3",
-                      },
-                      children: [
-                        {
-                          tagName: "th",
-                          options: { innerText: "Área destinada" },
-                        },
-                        { tagName: "th", options: { innerText: "Cantidad" } },
-                        {
-                          tagName: "th",
-                          options: { innerText: "Precio Estimado" },
-                        },
-                        {
-                          tagName: "th",
-                          options: { innerText: "Descripción" },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  tagName: "tbody",
-                  children: articulosLicitados,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    return objectToElement({
-      tagName: "table",
-      options: {
-        class: "table table-bordered",
-      },
-      children: [
-        {
-          tagName: "thead",
-          children: [
-            {
-              tagName: "tr",
-              children: [
-                {
-                  tagName: "th",
-                  options: {
-                    class: "bg-1",
-                    colspan: "3",
-                    innerText: "Datos de la Convocatoria",
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        {
-          tagName: "tbody",
-          children: [
-            expedienteTipoDocumentacion,
-            expedienteNumeroExpedienteEjercicio,
-            asuntoConvocatoria,
-            rowTableDataPliego,
-            rowTableArticulosListados,
-          ],
-        },
-      ],
+    articulosLicitados.forEach((articulo) => {
+      containerDataArticulosSolicitados.append(
+        objectToElement(
+          dataToTrObject(
+            true,
+            articulo.getAttribute("descripcion"),
+            articulo.getAttribute("cantidad"),
+            articulo.getAttribute("precio_estimado"),
+            articulo.getAttribute("importado"),
+            articulo.getAttribute("area_destinataria")
+          )
+        )
+      );
     });
+    //Primera Tabla
   }
 };

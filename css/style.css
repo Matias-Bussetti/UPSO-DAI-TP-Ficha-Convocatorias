@@ -1,36 +1,10 @@
-.bg-1,
-.bg-1-2,
-.bg-1-2-3,
-.bg-1-2-3-4 {
-  color: #eee;
-}
-.bg-1 {
-  background-color: #013442 !important;
-}
-.bg-1-2 {
-  background-color: #134c5c !important;
-}
-.bg-1-2-3 {
-  background-color: #016885 !important;
-}
-.bg-1-2-3-4 {
-  background-color: #3b7d8f !important;
-}
-
-#scroll {
-  overflow-x: inherit;
-}
-
-#loading-button-icon {
-  display: none;
-}
-
 .offcanvas {
   --bs-offcanvas-height: 200px !important;
 }
-
-@media (max-width: 600px) {
-  #scroll {
-    overflow-x: scroll;
-  }
+.list {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+#loading-button-icon {
+  display: none;
 }
