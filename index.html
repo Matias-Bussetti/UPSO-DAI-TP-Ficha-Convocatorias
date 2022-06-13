@@ -16,8 +16,8 @@
 <body class="bg-light ">
     <nav class="navbar navbar-light bg-white">
         <div class="container-fluid">
-            <a class="navbar-brand ps-5 py-5" href="#">
-                <img src="./img/uns_top_left.png" class="d-inline-block align-text-top">
+            <a class="navbar-brand ps-sm-5 py-sm-5" href="#">
+                <img src="./img/uns_top_left.png" class="d-inline-block align-text-top w-100">
             </a>
         </div>
     </nav>
@@ -29,10 +29,86 @@
             </div>
         </button>
     </div>
+    <main class="container-fluid m-0 p-0">
+        <div class="row p-0 m-0">
+            <div class="col-12 col-lg-8 col-sm-10 mx-auto table-responsive p-0 rounded">
+                <table class="table table-bordered rounded-5">
+                    <thead>
+                        <tr class="table-dark">
+                            <th colspan="3">Datos de la Convocatoria</th>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="col">Tipo</th>
+                            <th scope="col">N°/Año</th>
+                            <th scope="col">Asunto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datos-convocatoria">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
 
-    <div id="scroll" class="container-fluid p-0">
-        <main class="col-12 col-md-10 mx-0 mx-md-auto"></main>
-    </div>
+            <div class="col-12 col-lg-8 col-sm-10 mx-auto table-responsive p-0 rounded">
+                <table class="table table-bordered rounded-5">
+                    <thead>
+                        <tr class="table-dark">
+                            <th colspan="5">Datos del Pliego</th>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="col">Dirrección Retiro</th>
+                            <th scope="col">Horario Retiro</th>
+                            <th scope="col">Dir. Acto Apertura</th>
+                            <th scope="col">Fecha Acto Apertura</th>
+                            <th scope="col">Horario Acto Apertura</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datos-convocatoria">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            <div class="col-12 col-lg-8 col-sm-10 mx-auto table-responsive p-0 rounded">
+                <table class="table table-bordered rounded-5">
+                    <thead>
+                        <tr class="table-dark">
+                            <th colspan="3">Condiciones del Pliego</th>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="col">N°</th>
+                            <th scope="col">Título</th>
+                            <th scope="col">Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datos-convocatoria">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            <div class="col-12 col-lg-8 col-sm-10 mx-auto table-responsive p-0 rounded">
+                <table class="table table-bordered rounded-5">
+                    <thead>
+                        <tr class="table-dark">
+                            <th colspan="5">Articulos Solicitados</th>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Precio Estimado</th>
+                            <th scope="col">Importado</th>
+                            <th scope="col">Área Destino</th>
+                        </tr>
+                    </thead>
+                    <tbody id="articulos-solicitados">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
     <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
         id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
         <div class="offcanvas-header">
