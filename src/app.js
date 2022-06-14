@@ -68,9 +68,7 @@ window.onload = () => {
 
           elementDisableAttributeValue(buttonAbort, true);
 
-          document
-            .querySelector(CONTAINER_TABLE_QUERY)
-            .append(tableFromXML(xhttp));
+          tableFromXML(xhttp);
           hideOffsetTimeOut();
           break;
 
@@ -102,7 +100,7 @@ window.onload = () => {
 
   //Load
   xhttp.onloadstart = (e) => {
-    //document.querySelector(CONTAINER_TABLE_QUERY).innerHTML = "";
+    clearTbodys();
     showElement(loadingIconElement, true);
     elementDisableAttributeValue(buttonRequest, true);
     elementDisableAttributeValue(buttonAbort, false);
@@ -149,59 +147,40 @@ window.onload = () => {
     hideOffsetTimeOut();
   };
 
-  function tableFromXML(xhttp) {
-    var xdoc = xhttp.responseXML;
-    console.log(xdoc);
+  function clearTbodys() {
+    containerDataConvocatoria.innerHTML = "";
+    containerDataPliego.innerHTML = "";
+    containerDataCondicionesPliego.innerHTML = "";
+    containerDataArticulosSolicitados.innerHTML = "";
+  }
 
-    var convocatoria = xdoc.getElementsByTagName("convocatoria")[0];
-    var pliego = convocatoria.getElementsByTagName("pliegos")[0].children[0];
-    var condicionesPliego = [...pliego.children[0].children];
-    var articulosLicitados = [
-      ...xdoc.getElementsByTagName("get_items_solicitados")[0].children,
-    ];
+  function dataToTrObject(isText, ...tableData) {
+    var tdObjectChildrens = tableData.map((data) => {
+      let tdObject;
+      if (isText) {
+        tdObject = {
+          tagName: "td",
+          options: {
+            innerText: data,
+          },
+        };
+      } else {
+        tdObject = {
+          tagName: "td",
+          options: {
+            innerHTML: data,
+          },
+        };
+      }
+      return tdObject;
+    });
+    return {
+      tagName: "tr",
+      children: tdObjectChildrens,
+    };
+  }
 
-    //Ordenamos las Condiciones del Pliego
-    condicionesPliego = condicionesPliego.sort(
-      (primerItem, segundoItem) =>
-        +(
-          primerItem.getAttribute("numero") -
-          +segundoItem.getAttribute("numero")
-        )
-    );
-
-    function dataToTrObject(isText, ...tableData) {
-      var tdObjectChildrens = tableData.map((data) => {
-        let tdObject;
-        if (isText) {
-          tdObject = {
-            tagName: "td",
-            options: {
-              innerText: data,
-            },
-          };
-        } else {
-          tdObject = {
-            tagName: "td",
-            options: {
-              innerHTML: data,
-            },
-          };
-        }
-        return tdObject;
-      });
-      return {
-        tagName: "tr",
-        children: tdObjectChildrens,
-      };
-    }
-    console.log(
-      convocatoria.getAttribute("expediente_tipo_documentacion"),
-      convocatoria.getAttribute("expediente_numero") +
-        "/" +
-        convocatoria.getAttribute("expediente_ejercicio"),
-      convocatoria.getAttribute("asunto_convocatoria")
-    );
-
+  function TableRowFromConvocatoria(convocatoria) {
     containerDataConvocatoria.append(
       objectToElement(
         dataToTrObject(
@@ -214,7 +193,9 @@ window.onload = () => {
         )
       )
     );
+  }
 
+  function TableRowFromPliego(pliego) {
     containerDataPliego.append(
       objectToElement(
         dataToTrObject(
@@ -227,8 +208,10 @@ window.onload = () => {
         )
       )
     );
+  }
 
-    condicionesPliego.forEach((condicion) => {
+  function TableRowsFromCondiciones(condiciones) {
+    condiciones.forEach((condicion) => {
       containerDataCondicionesPliego.append(
         objectToElement(
           dataToTrObject(
@@ -240,8 +223,10 @@ window.onload = () => {
         )
       );
     });
+  }
 
-    articulosLicitados.forEach((articulo) => {
+  function TableRowFromArticulosSolicitados(articulos) {
+    articulos.forEach((articulo) => {
       containerDataArticulosSolicitados.append(
         objectToElement(
           dataToTrObject(
@@ -255,6 +240,26 @@ window.onload = () => {
         )
       );
     });
-    //Primera Tabla
+  }
+
+  function tableFromXML(xhttp) {
+    var xdoc = xhttp.responseXML;
+
+    var convocatoria = xdoc.getElementsByTagName("convocatoria")[0];
+    TableRowFromConvocatoria(convocatoria);
+
+    var pliego = convocatoria.getElementsByTagName("pliegos")[0].children[0];
+    TableRowFromPliego(pliego);
+
+    var condicionesPliego = [...pliego.children[0].children].sort(
+      (primerItem, segundoItem) =>
+        +primerItem.getAttribute("numero") - +segundoItem.getAttribute("numero")
+    );
+    TableRowsFromCondiciones(condicionesPliego);
+
+    var articulosLicitados = [
+      ...xdoc.getElementsByTagName("get_items_solicitados")[0].children,
+    ];
+    TableRowFromArticulosSolicitados(articulosLicitados);
   }
 };
