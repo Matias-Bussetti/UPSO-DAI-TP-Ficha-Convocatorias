@@ -1,32 +1,11 @@
-.bg-1,
-.bg-1-2,
-.bg-1-2-3,
-.bg-1-2-3-4 {
-  color: #eee;
+.offcanvas {
+  --bs-offcanvas-height: 200px !important;
 }
-.bg-1 {
-  background-color: #013442 !important;
+.list {
+  max-height: 400px;
+  overflow-y: scroll;
+  overflow-x: scroll;
 }
-.bg-1-2 {
-  background-color: #134c5c !important;
-}
-.bg-1-2-3 {
-  background-color: #016885 !important;
-}
-.bg-1-2-3-4 {
-  background-color: #3b7d8f !important;
-}
-
-.zoomout {
-  zoom: 1;
-  -moz-transform: scale(1);
-  -moz-transform-origin: 0 0;
-}
-
-@media (max-width: 600px) {
-  .zoomout {
-    zoom: 0.5;
-    -moz-transform: scale(0.5);
-    -moz-transform-origin: 0 0;
-  }
+#loading-button-icon {
+  display: none;
 }
