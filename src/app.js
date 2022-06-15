@@ -184,6 +184,7 @@ window.onload = () => {
   }
 
   /**
+   *
    * Esta función sirve para crear un TR como objeto, este mismo servira para convertilo en un elemento (ver funcion {@link objectToElement} en el archivo functions.js )
    *
    * @param {boleen} isText Dependiendo de este parámetro, el contenido dentro del TD va a ser innerText (true) o innerHTML (false)
@@ -224,7 +225,6 @@ window.onload = () => {
    * - En este caso son los datos de la convocatoria
    */
   function TableRowFromConvocatoria(convocatoria) {
-    console.log([convocatoria, convocatoria]);
     containerDataConvocatoria.append(
       objectToElement(
         dataToTrObject(
