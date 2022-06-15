@@ -9,3 +9,6 @@
 #loading-button-icon {
   display: none;
 }
+.progress-bar {
+  transition: width 0.2s linear;
+}

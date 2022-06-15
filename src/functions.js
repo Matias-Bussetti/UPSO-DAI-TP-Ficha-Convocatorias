@@ -52,8 +52,8 @@ function showElement(element, displayValue) {
  *
  * @example <caption>Ejemplo de como usar el Metodo:</caption>
  * // El atributo "disabled" se:
- * elementDisableAttributeValue(element, true); // Agrega
- * elementDisableAttributeValue(element, false);// Elimina
+ * elementDisableAttributeValue(element, true); // Agrega - Elemento deshabilitado
+ * elementDisableAttributeValue(element, false);// Elimina - Elemento habilitado
  */
 function elementDisableAttributeValue(element, disableValue) {
   if (disableValue) {
@@ -65,7 +65,7 @@ function elementDisableAttributeValue(element, disableValue) {
 
 /**
  * @typedef {Object} options
- * Objeto de atributos de un `HTMLElement`
+ * Objeto de atributos de un {@link HTMLElement}
  *
  * Ejemplo:
  * ```
@@ -78,7 +78,7 @@ function elementDisableAttributeValue(element, disableValue) {
  */
 
 /**
- * Objeto con datos de un `HTMLElement` que se utilizar para crearlo y recursivamente tambien a sus hijos
+ * Objeto con datos de un {@link HTMLElement} que se utilizar para crearlo y recursivamente tambien a sus hijos
  * @typedef {Object} objectElementData
  * @property {string} tagName - Nombre de la Etiqueta
  * @property {options} options - Objeto de tipo options, con los datos y los atributos del elemento
@@ -86,9 +86,9 @@ function elementDisableAttributeValue(element, disableValue) {
  */
 
 /**
- * Esta función recibe como parámetro un objeto de tipo `objectElementData` y lo convierte en un elemento.
+ * Esta función recibe como parámetro un objeto de tipo {@link objectElementData} y lo convierte en un elemento.
  *
- * @param {objectElementData} objectElementData - Objeto de tipo `objectElementData`
+ * @param {objectElementData} objectElementData - Objeto de tipo {@link objectElementData}
  * @return {HTMLElement} - Retorna un elemento HTML con el formato pasado como parámetro
  *
  * @example <caption>Ejemplo de como usar el Metodo:</caption>
