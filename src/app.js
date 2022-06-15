@@ -1,3 +1,6 @@
+//GITHUB https://github.com/Matias-Bussetti/UPSO-DAI-TP-Ficha-Convocatorias.github.io
+//PAGINA https://matias-bussetti.github.io/UPSO-DAI-TP-Ficha-Convocatorias.github.io/
+
 window.onload = () => {
   /**
    *
