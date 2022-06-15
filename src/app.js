@@ -224,7 +224,6 @@ window.onload = () => {
    * - En este caso son los datos de la convocatoria
    */
   function TableRowFromConvocatoria(convocatoria) {
-    console.log([convocatoria, convocatoria]);
     containerDataConvocatoria.append(
       objectToElement(
         dataToTrObject(
